@@ -1,7 +1,6 @@
 package com.ravenliao.navigationshareelementexample.ui.list
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -47,19 +46,18 @@ class ListFragment : Fragment() {
                 val pos = returnPosition
                 if (pos != null) {
                     returnPosition = null
-                    names?.apply {
-                        clear()
-                        add(pos)
-                    }
 
-                    sharedElements?.apply {
-                        clear()
-                        val view =
-                            (binding.list.findViewHolderForAdapterPosition(pos.toInt()) as ListAdapter.ItemHolder).binding.ivImg
-                        put(pos, view)
+                    names?.first()?.also { name ->
+                        sharedElements?.apply {
+                            clear()
+                            val view =
+                                (binding.list.findViewHolderForAdapterPosition(pos.toInt()) as ListAdapter.ItemHolder).binding.ivImg
+
+                            ViewCompat.setTransitionName(view, name)
+                            put(name, view)
+                        }
                     }
                 }
-                Log.e("Exit ", "names:${names}  eles:$sharedElements")
             }
         })
     }
@@ -67,7 +65,6 @@ class ListFragment : Fragment() {
     private fun initList() {
         adapter = ListAdapter { holder, position ->
             val positionString = position.toString()
-            ViewCompat.setTransitionName(holder.binding.ivImg, positionString)
 
             if (positionString == returnPosition) {
                 startPostponedEnterTransition()
@@ -82,6 +79,8 @@ class ListFragment : Fragment() {
                     returnPosition = bundle.getString(POSITION_KEY)
                     postponeEnterTransition()
                 }
+
+                ViewCompat.setTransitionName(holder.binding.ivImg, positionString)
 
                 val extras = FragmentNavigatorExtras(holder.binding.ivImg to positionString)
                 findNavController().navigate(

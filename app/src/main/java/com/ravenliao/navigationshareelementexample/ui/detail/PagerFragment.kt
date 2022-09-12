@@ -3,7 +3,6 @@ package com.ravenliao.navigationshareelementexample.ui.detail
 import android.annotation.SuppressLint
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -50,18 +49,15 @@ class PagerFragment : Fragment() {
                 sharedElements: MutableMap<String, View>?
             ) {
                 val nowPosition = binding.viewpager.currentItem
-                val nowPositionString = nowPosition.toString()
 
-                names?.apply {
-                    clear()
-                    add(nowPositionString)
+                names?.first()?.also { name ->
+                    sharedElements?.apply {
+                        clear()
+                        val imageView = adapter.getFragment(nowPosition).getImageView()
+                        ViewCompat.setTransitionName(imageView, name)
+                        put(name, imageView)
+                    }
                 }
-                sharedElements?.apply {
-                    clear()
-                    put(nowPositionString, adapter.getFragment(nowPosition).getImageView())
-                }
-
-                Log.e("setEnter: ", "names:${names}  eles:$sharedElements")
             }
         })
 
@@ -89,8 +85,7 @@ class PagerFragment : Fragment() {
             setList(requireContext().getDrawableList())
         }
 
-        DetailFragment.setCallBack { imageView, pos ->
-            ViewCompat.setTransitionName(imageView, pos)
+        DetailFragment.setCallBack { _, pos ->
 
             if (pos == clickPosition) {
                 startPostponedEnterTransition()
