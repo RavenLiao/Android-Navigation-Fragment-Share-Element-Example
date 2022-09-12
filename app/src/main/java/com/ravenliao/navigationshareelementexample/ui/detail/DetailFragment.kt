@@ -45,6 +45,8 @@ class DetailFragment : Fragment() {
         afterInitImg?.invoke(binding.ivDetail, position.toString())
     }
 
+    fun getImageView() = binding.ivDetail
+
     companion object {
         @JvmStatic
         private var afterInitImg: ((ImageView, String) -> Unit)? = null
