@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.app.SharedElementCallback
 import androidx.core.view.ViewCompat
+import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.clearFragmentResultListener
 import androidx.fragment.app.setFragmentResultListener
@@ -77,7 +78,7 @@ class ListFragment : Fragment() {
                     clearFragmentResultListener(requestKey = key)
                     //接收返回的position
                     returnPosition = bundle.getString(POSITION_KEY)
-                    postponeEnterTransition()
+                    executeReturnTransition()
                 }
 
                 ViewCompat.setTransitionName(holder.binding.ivImg, positionString)
@@ -94,11 +95,26 @@ class ListFragment : Fragment() {
             setList(requireContext().getDrawableList())
         }
 
-        layoutManager = GridLayoutManager(context, 3)
+        layoutManager = GridLayoutManager(context, 2)
 
         binding.list.apply {
             adapter = this@ListFragment.adapter
             layoutManager = this@ListFragment.layoutManager
+        }
+    }
+
+    private fun executeReturnTransition() {
+        val pos = returnPosition?.toIntOrNull() ?: return
+        postponeEnterTransition()
+        binding.list.doOnPreDraw {
+            layoutManager.apply {
+                if (pos !in findFirstVisibleItemPosition()..findLastVisibleItemPosition()) {
+                    //若返回位置不可视，则先滚动到一半的位置
+                    scrollToPositionWithOffset(pos, binding.list.height shr 1)
+                } else {
+                    startPostponedEnterTransition()
+                }
+            }
         }
     }
 
