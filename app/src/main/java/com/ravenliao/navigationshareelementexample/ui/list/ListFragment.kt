@@ -20,6 +20,8 @@ import com.ravenliao.navigationshareelementexample.model.getDrawableList
 
 const val RETURN_POSITION_KEY = "return_position"
 
+const val FRAGMENT_TRANSITION_EXTRA="moveTransition"
+
 class ListFragment : Fragment() {
     private lateinit var binding: FragmentListBinding
     private lateinit var adapter: ListAdapter
@@ -83,7 +85,8 @@ class ListFragment : Fragment() {
 
                 ViewCompat.setTransitionName(holder.binding.ivImg, positionString)
 
-                val extras = FragmentNavigatorExtras(holder.binding.ivImg to positionString)
+                //此处的Extra与TransitionName无关,这个name会在pager处的callback中传入
+                val extras = FragmentNavigatorExtras(holder.binding.ivImg to FRAGMENT_TRANSITION_EXTRA)
                 findNavController().navigate(
                     R.id.action_listFragment_to_pagerFragment,
                     Bundle().apply {
