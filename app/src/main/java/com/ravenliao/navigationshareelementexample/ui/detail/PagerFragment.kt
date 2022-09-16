@@ -54,7 +54,7 @@ class PagerFragment : Fragment() {
                     sharedElements?.apply {
                         clear()
                         val imageView = adapter.getFragment(nowPosition).getImageView()
-                        ViewCompat.setTransitionName(imageView, name)
+                        ViewCompat.setTransitionName(imageView, nowPosition.toString())
                         put(name, imageView)
                     }
                 }
@@ -95,6 +95,7 @@ class PagerFragment : Fragment() {
 
         binding.viewpager.apply {
             adapter = this@PagerFragment.adapter
+            offscreenPageLimit = 1
             clickPosition?.also { pos ->
                 setCurrentItem(pos.toInt(), false)
             }
